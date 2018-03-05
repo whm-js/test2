@@ -1,0 +1,204 @@
+<template>
+  <div class="selectFromDepartment">
+    <el-container>
+      <el-header style="background-color:#67C23A;">
+        <el-input style="width:300px;margin-top: 10px;" placeholder="输入科室搜索" v-model="seachValue" class="input-with-select">
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
+        <el-button @click.native.prevent="downfile" size="small">
+          导出
+        </el-button>
+      </el-header>
+      <el-main>
+        <el-table :data="selectData" stripe border :max-height="innerHeight" ref='datatable' id="datatable1" style="width: 100%;">
+          <!-- <el-table-column prop="date" label="序号" width="180">
+          </el-table-column> -->
+          <el-table-column type="index" label="序号" width="50" :index="indexMethod">
+          </el-table-column>
+          <el-table-column prop="name" label="月份" width="180">
+          </el-table-column>
+          <el-table-column prop="address" label="轮转人数">
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" width="120">
+            <template slot-scope="scope">
+              <el-button @click.native.prevent="selectPeople(scope.$index, scope.row)" size="small">
+                查看轮转人员
+              </el-button>
+              <el-button @click.native.prevent="selectPeople(scope.$index, scope.row)" size="small">
+                查看
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+      </el-main>
+    </el-container>
+
+    <el-dialog title="科室轮转人员详情" :visible.sync="dialogTableVisible">
+
+      <el-dialog width="50%" title="调整计划" :visible.sync="innerdialogVisible" append-to-body>
+        <el-row>
+          <el-col :span="24">
+            <div style="width:100%;height:40px;">
+              <span style="margin-left: 50px;float: left;">姓名：{{}}</span>
+              <span style="margin-right: 50px;float: right;">账号：{{}}</span>
+            </div>
+          </el-col>
+        </el-row>
+        <el-table :data="selectData" height="400" border stripe>
+          <el-table-column property="name" label="轮转科室" width="200"></el-table-column>
+          <el-table-column property="address" label="轮转时段"></el-table-column>
+        </el-table>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="innerdialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="innerdialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
+
+      <el-row>
+        <el-col :span="24">
+          <div style="width:100%;height:40px;">
+            <span style="margin-left: 50px;float: left;">轮转时间：{{}}</span>
+            <span style="margin-right: 50px;float: right;">轮转科室：{{}}</span>
+          </div>
+        </el-col>
+      </el-row>
+      <el-table :data="selectData" height="400" border stripe id="aaaa">
+        <el-table-column property="date" label="账号" width="150"></el-table-column>
+        <el-table-column property="name" label="护士姓名" width="200"></el-table-column>
+        <el-table-column property="address" label="轮转时间"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="120">
+          <template slot-scope="scope">
+            <el-button @click.native.prevent="selectPlan(scope.$index, scope.row)" size="small">
+              查看计划
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogTableVisible = false">取 消</el-button>
+          <el-button type="primary" @click="downfile">确 定</el-button>
+        </span>
+    </el-dialog>
+
+  </div>
+</template>
+
+<script>
+import exportExcel from "@/excel";
+var that;
+export default {
+  name: "",
+  created() {
+    that = this;
+  },
+  data() {
+    return {
+      innerHeight: window.innerHeight - 160,
+      dialogTableVisible: false,
+      innerdialogVisible: false,
+      seachValue: "",
+      selectData: [
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-02",
+          name: "王虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-04",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-01",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-08",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-06",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-07",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-04",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-01",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-08",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-06",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-07",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        }
+      ]
+    };
+  },
+  methods: {
+    indexMethod(index) {
+      return index + 1;
+    },
+    selectPeople(index, row) {
+      this.dialogTableVisible = true;
+    },
+    selectPlan(index, row) {
+      this.innerdialogVisible = true;
+    },
+    downfile() {
+      //使用el-table,如果有操作那一栏table元素需要#datatable1 .el-table__fixed-right，没有的话就#datatable1
+      exportExcel(document.querySelector("#datatable1 .el-table__fixed-right"),'aaa.xlsx');
+    }
+  },
+  mounted() {
+    window.onresize = () => {
+      that.innerHeight = window.innerHeight - 160;
+    };
+  }
+};
+
+window.onresize = () => {
+  this.innerHeight = window.innerHeight - 160;
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+.selectFromDepartment {
+  height: 100%;
+}
+</style>

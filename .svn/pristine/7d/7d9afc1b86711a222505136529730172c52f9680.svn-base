@@ -1,0 +1,218 @@
+<template>
+  <div class="main">
+
+  <div class="col-md-12">
+    <div class="query-row-date">
+        <div class="query-row-date-title">
+            <label class="query-title-label">计划入科时间：</label>
+        </div>
+        <div class="query-row-date-input" style="padding-left:8px;">
+            <select id="selYear" v-on:change="dateChange($event)">
+                <option v-for="(item,index) in selYearArr" v-bind:selected="Number(dateStrArr[0])===item"> {{item}}</option>
+            </select>
+            <label style="float:left;">年</label>
+        </div>
+        <div class="query-row-date-input">
+            <select id="selMonth" v-on:change="dateChange($event)">
+                <option v-for="(item,index) in selMonthArr" v-bind:selected="Number(dateStrArr[1])===item">{{item}}</option>
+            </select>
+            <label style="float:left;">月</label>
+        </div>
+        <div class="query-row-date-input">
+            <select id="selDay" v-on:change="dateChange($event)">
+                <option v-bind:selected="Number(dateStrArr[2])===1">1</option>
+                <option v-bind:selected="Number(dateStrArr[2])===16">16</option>
+            </select>
+            <label style="float:left;">日</label>
+        </div>
+    </div>
+    <div class="query-row">
+        <div class="query-col">
+            <label class="query-label-control">入科科室：</label>
+            <div class="query-input-div">
+                <el-select v-model="departmentValue" filterable  placeholder="请选择">
+                  <el-option
+                    v-for="item in departmentData"
+                    :key="item.departmentId"
+                    :label="item.departmentName"
+                    :value="item.departmentName">
+                  </el-option>
+                </el-select>
+            </div>
+        </div>
+        <div class="query-col">
+            <label class="query-label-control">入科状态：</label>
+            <div class="query-input-div">
+                <el-select v-model="rotateStatusValue"  placeholder="请选择">
+                  <el-option
+                    v-for="item in rotateStatus"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.name">
+                  </el-option>
+                </el-select>
+            </div>
+        </div>
+        <div class="query-col">
+            <el-button type="info" icon="el-icon-search">查询</el-button>
+        </div>
+    </div>
+    <div class="query-toolbar">
+      <el-button type="info">导出学员</el-button>
+    </div>
+  </div>
+
+  <el-main>
+    <el-table :data="studentListData" stripe border :max-height="innerHeight" style="width: 100%;">
+      <el-table-column prop="index" label="序号"></el-table-column>
+      <el-table-column prop="userName" label="账号"></el-table-column>
+      <el-table-column prop="realName" label="姓名"></el-table-column>
+      <el-table-column prop="oldDepartment" label="原科室"></el-table-column>
+      <el-table-column prop="department" label="入科科室"></el-table-column>
+      <el-table-column prop="planStartDate" label="计划入科时间"></el-table-column>
+      <el-table-column prop="planEndDate" label="计划出科时间"></el-table-column>
+      <el-table-column prop="realStartDate" label="实际入科时间"></el-table-column>
+      <el-table-column prop="rotateStatus" label="入科状态"></el-table-column>
+      <el-table-column prop="operation" label="操作"></el-table-column>
+    </el-table>
+  </el-main>
+</div>
+</template>
+
+<script>
+export default {
+  name: '',
+  data () {
+    return {
+      innerHeight:window.innerHeight - 160,
+      DateTimes: 0,
+      dateStrArr: [],
+      selYearArr: [],
+      selMonthArr: [1,2,3,4,5,6,7,8,9,10,11,12],
+      rotateStatusValue:'',
+      rotateStatus:[
+        {
+          id:2,
+          name:'未批准入科'
+        },{
+          id:100,
+          name:'已入科'
+        }
+      ],
+      departmentValue:'',
+      departmentData:[
+        {
+          departmentId:1,
+          departmentName:'儿科'
+        },{
+          departmentId:2,
+          departmentName:'内科'
+        },{
+          departmentId:3,
+          departmentName:'神经内科'
+        },{
+          departmentId:4,
+          departmentName:'全科'
+        },{
+          departmentId:5,
+          departmentName:'妇产科'
+        }
+
+      ],
+      studentListData:[
+        {
+          index:1,
+          userName:'13333333333',
+          realName:'张三',
+          oldDepartment:'内科',
+          department:'妇产科',
+          planStartDate:'2017-10-1',
+          planEndDate:'2018-1-30',
+          realStartDate:'2017-11-1',
+          rotateStatus:'已入科',
+          operation:'个人信息'
+        },{
+          index:1,
+          userName:'13333333333',
+          realName:'张三',
+          oldDepartment:'内科',
+          department:'妇产科',
+          planStartDate:'2017-10-1',
+          planEndDate:'2018-1-30',
+          realStartDate:'2017-11-1',
+          rotateStatus:'已入科',
+          operation:'个人信息'
+        },{
+          index:1,
+          userName:'13333333333',
+          realName:'张三',
+          oldDepartment:'内科',
+          department:'妇产科',
+          planStartDate:'2017-10-1',
+          planEndDate:'2018-1-30',
+          realStartDate:'2017-11-1',
+          rotateStatus:'已入科',
+          operation:'个人信息'
+        },{
+          index:1,
+          userName:'13333333333',
+          realName:'张三',
+          oldDepartment:'内科',
+          department:'妇产科',
+          planStartDate:'2017-10-1',
+          planEndDate:'2018-1-30',
+          realStartDate:'2017-11-1',
+          rotateStatus:'已入科',
+          operation:'个人信息'
+        }
+      ]
+    }
+  },
+  activated() {
+    window.scrollTo(0, 0);
+    var nowdate = new Date();
+    var newdate = nowdate.toLocaleDateString().replace(/[\/]/gi, '-');
+    var dateStr = newdate.split('-');
+    var dayStr = dateStr[dateStr.length - 1];
+    if(Number(dayStr)>=1&&Number(dayStr)<16){
+        dateStr[dateStr.length-1]='01';
+    }else{
+        dateStr[dateStr.length-1]='16';
+    }
+    this.dateStrArr = dateStr;
+    this.DateTimes = dateStr.join('-');
+    var curYear = nowdate.getFullYear();
+    for (var i = 2014; i <= curYear + 2; i++) {
+        this.selYearArr.push(i);
+    }
+  },
+  methods: {
+    //设置日期控件值的改变事件
+    dateChange: function (evt) {
+        var opt = evt.target;
+        var optID = opt.id;
+        if (optID === 'selYear') {
+            this.dateStrArr[0] = opt.value;
+        }
+        if (optID === 'selMonth') {
+            this.dateStrArr[1] = opt.value;
+        }
+        this.DateTimes = this.dateStrArr.join('-');
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+@import '../assets/query.css';
+
+.col-md-12{
+  min-height: 1px;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+td,th div{text-align: center;}
+th{color:#333;text-align: center;}
+</style>
