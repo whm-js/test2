@@ -78,7 +78,7 @@ export default async (url, data, method = "post") => {
         }).then(function (res) {
             resolve(res.data)
         }).catch(function (err) {
-            // Message.error(err);
+            Message.error(err);
             reject(err)
         });
     })

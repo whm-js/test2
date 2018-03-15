@@ -34,7 +34,11 @@ import {
   Tabs,
   TabPane,
   Message,
-  Autocomplete
+  Autocomplete,
+  Steps,
+  Step,
+  MessageBox,
+  Loading
 } from 'element-ui';
 Vue.use(Container)
 Vue.use(Header)
@@ -62,6 +66,16 @@ Vue.use(DatePicker)
 Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Autocomplete)
+Vue.use(Steps)
+Vue.use(Step)
+Vue.use(Loading)
+// Vue.use(MessageBox)
+
+Vue.$message = Vue.prototype.$message = MessageBox;
+Vue.$alert = Vue.prototype.$alert = MessageBox.alert;
+Vue.$confirm = Vue.prototype.$confirm = MessageBox.confirm;
+
+Vue.prototype
 
 /* eslint-disable no-new */
 new Vue({

@@ -1,35 +1,35 @@
 <template>
   <el-container>
-    <el-header style="height:190px;margin-top:30px;overflow: hidden;">
-      <el-row :gutter="20">
-        <el-col :span="3" style="padding-top:5px;text-align: right;">计划出科时间：</el-col>
+    <el-header style="min-height:190px;height:auto;margin-top:30px;overflow: hidden;">
+      <el-row :gutter="12">
+        <el-col :span="3" style="padding-top:5px;padding-left:15px;margin-left:10px;text-align: center;">计划出科时间：</el-col>
         <el-col :span="3">
-        <el-select v-model="selYearValue"  placeholder="请选择" style="width:100px;">
+        <el-select :span="2" v-model="selYearValue"  placeholder="请选择" style="float:left;width:100px;margin-left:3px;">
             <el-option v-for="item in selYearArr" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
-          <span>年</span>
+          <el-col :span="1" style="float:left;padding-top:8px;">年</el-col>
         </el-col>
         <el-col :span="3">
-          <el-select v-model="selMonthValue"  placeholder="请选择" style="width:100px;">
+          <el-select :span="2" v-model="selMonthValue"  placeholder="请选择" style="float:left;width:100px;">
             <el-option v-for="item in selMonthArr" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
-          <span>月</span>
+          <el-col :span="1" style="float:left;padding-top:8px;">月</el-col>
         </el-col>
         <el-col :span="3">
-          <el-select v-model="selDayValue"  placeholder="请选择" style="width:100px;">
+          <el-select :span="2" v-model="selDayValue"  placeholder="请选择" style="float:left;width:100px;">
             <el-option v-for="item in selDayArr" :key="item.id" :label="item.name" :value="item.id">
             </el-option>
           </el-select>
-          <span>日</span>
+          <el-col :span="1" style="float:left;padding-top:8px;">日</el-col>
         </el-col>
       </el-row>
 
-      <el-row :gutter="20" style="padding-bottom:20px;border-bottom: 1px solid #ccc;">
-        <el-col :span="6" style="margin-left:60px;">
-          <span style="float: left;padding:5px 10px 0px 0px;">出科科室：</span>
-          <el-select v-model="departmentValue" filterable  placeholder="请选择" style="width:180px;">
+      <el-row :gutter="22" style="padding-bottom:20px;border-bottom: 1px solid #ccc;">
+        <el-col :span="9" style="margin-left:60px;padding-left: 0px;">
+          <el-col :span="6" style="float: left;padding:5px 10px 0px 0px;">出科科室：</el-col>
+          <el-select :span="3" v-model="departmentValue" filterable  placeholder="请选择" style="width:180px;">
             <el-option
               v-for="item in departmentData"
               :key="item.departmentId"
@@ -38,9 +38,9 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
-          <span style="float: left;padding:5px 10px 0px 0px;">出科状态：</span>
-          <el-select v-model="rotateStatusValue"  placeholder="请选择" style="width:180px;">
+        <el-col :span="9">
+          <el-col :span="6" style="float: left;padding:5px 10px 0px 0px;">出科状态：</el-col>
+          <el-select :span="3" v-model="rotateStatusValue"  placeholder="请选择" style="width:180px;">
             <el-option
               v-for="item in rotateStatus"
               :key="item.id"
@@ -49,12 +49,12 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="4">
           <el-button type="primary" icon="el-icon-search">查询</el-button>
         </el-col>
       </el-row>
 
-      <el-row>
+      <el-row :gutter="24">
         <el-col :span="12" style="margin-left:20px;">
           <el-button type="info" icon="el-icon-download">导出学员</el-button>
         </el-col>
@@ -69,19 +69,19 @@
         <el-table-column prop="realName" label="姓名"></el-table-column>
         <el-table-column prop="department" label="出科科室"></el-table-column>
         <el-table-column prop="planEndDate" label="计划出科时间"></el-table-column>
-        <el-table-column prop="evaluate" label="护士长评价"></el-table-column>
         <el-table-column prop="realEndDate" label="实际出科时间"></el-table-column>
+        <el-table-column prop="evaluate" label="护士长评价"></el-table-column>
         <el-table-column prop="rotateStatus" label="出科状态"></el-table-column>
         <el-table-column prop="operation" label="操作" width="320">
           <template slot-scope="scope">
               <el-button @click.native.prevent="showUserInfos(scope.$index, scope.row)" size="small">
                 个人信息
               </el-button>
-              <el-button  size="small">
+              <el-button @click.native.prevent="showRotationManual(scope.$index, scope.row)"  size="small">
                轮转手册
               </el-button>
               <el-button @click.native.prevent="approvalOfExit(scope.$index, scope.row)" size="small">
-                批准出科
+                出科详情
               </el-button>
             </template>
         </el-table-column>
@@ -90,62 +90,11 @@
 
     <!--弹窗展示个人信息-->
     <el-dialog title="查看个人信息" :visible.sync="showUserdialogVisible">
-      <template slot-scope="">
-        <el-form :data="userData" label-position="left" inline class="demo-table-expand">
-          <el-form-item label="账号：">
-            <span>{{userData.userName}}</span>
-          </el-form-item>
-          <el-form-item label="角色：">
-            <span>{{userData.role}}</span>
-          </el-form-item>
-          <el-form-item label="姓名：">
-            <span>{{userData.realName}}</span>
-          </el-form-item>
-          <el-form-item label="职级：">
-            <span>{{userData.workNo}}</span>
-          </el-form-item>
-          <el-form-item label="性别：">
-            <span>{{userData.sex}}</span>
-          </el-form-item>
-          <el-form-item label="职称：">
-            <span>{{userData.work}}</span>
-          </el-form-item>
-          <el-form-item label="学历：">
-            <span>{{userData.education}}</span>
-          </el-form-item>
-          <el-form-item label="来院时间：">
-            <span>{{userData.joinHospitalTime}}</span>
-          </el-form-item>
-          <el-form-item label="政治面貌：">
-            <span>{{userData.political}}</span>
-          </el-form-item>
-          <el-form-item label="出生年月：">
-            <span>{{userData.birthday}}</span>
-          </el-form-item>
-          <el-form-item label="毕业院校：">
-            <span>{{userData.finishSchool}}</span>
-          </el-form-item>
-          <el-form-item label="参加工作时间：">
-            <span>{{userData.joinWorkTime}}</span>
-          </el-form-item>
-          <el-form-item label="毕业时间：">
-            <span>{{userData.finishTime}}</span>
-          </el-form-item>
-          <el-form-item label="获取执业证书：">
-            <span>{{userData.certificateTime}}</span>
-          </el-form-item>
-          <el-form-item label="家庭地址：">
-            <span>{{userData.address}}</span>
-          </el-form-item>
-          <el-form-item label="获得职称时间：">
-            <span>{{userData.workTime}}</span>
-          </el-form-item>
-        </el-form>
-      </template>
+      <userInfo :UserData="userData"></userInfo>
     </el-dialog>
 
     <!--弹窗展示批准入科信息-->
-    <el-dialog title="批准出科" :visible.sync="exitdialogVisible">
+    <el-dialog :title="exitdialogTitle" :visible.sync="exitdialogVisible">
       <el-form :model="exitForm" :data="userData">
         <el-row style="margin-bottom:0px;">
         <el-col :span="6">
@@ -172,10 +121,18 @@
         <el-form-item label="个人总结：" id="personalSummary">
           <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" :value="userData.personalSummary" readonly style="background: #eee;"></el-input>
         </el-form-item>
+        <template v-if="hidden=='none'">
+          <el-form-item label="科室评价：" id="departmentEvaluation">
+            <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" :value="userData.departmentEvaluation" readonly style="background: #eee;"></el-input>
+          </el-form-item>
+        </template>
+        <template v-else>
+          <el-form-item label="科室评价：">
+            <el-input type="textarea" placeholder="请填写护士长评语，评价包括医德医风、职业素养、人文关怀、沟通技巧、理论学习、临床实践能力的日常表现等" :autosize="{ minRows: 4, maxRows: 6}" v-model="exitForm.departmentEvaluation"></el-input>
+          </el-form-item>
+        </template>
 
-        <el-form-item label="科室评价：">
-          <el-input type="textarea" placeholder="请填写护士长评语，评价包括医德医风、职业素养、人文关怀、沟通技巧、理论学习、临床实践能力的日常表现等" :autosize="{ minRows: 4, maxRows: 6}" v-model="exitForm.departmentEvaluation"></el-input>
-        </el-form-item>
+        <el-col :style="{display:hidden}">
         <el-form-item label="评价：">
           <el-radio-group v-model="exitForm.evaluation">
             <el-radio label="优秀" style="font-weight: normal;"></el-radio>
@@ -190,28 +147,53 @@
             <el-radio label="否" style="font-weight: normal;"></el-radio>
           </el-radio-group>
         </el-form-item>
-
+        </el-col>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div :style="{display:hidden}" slot="footer" class="dialog-footer">
         <el-button @click="exitdialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="exitdialogVisible = false">确 定</el-button>
       </div>
+    </el-dialog>
+
+    <!--弹窗展示轮转手册-->
+    <el-dialog title="轮转手册" :visible.sync="rotationdialogVisible">
+      <el-tabs type="border-card">
+        <el-tab-pane label="护理部核心能力培训">
+          <template>
+            <el-tabs type="card" v-model="tabActiveName">
+              <el-tab-pane label="岗前教育" name="first">岗前教育</el-tab-pane>
+              <el-tab-pane label="基础理论培训" name="second">基础理论培训</el-tab-pane>
+              <el-tab-pane label="基础技能量化培训" name="third">基础技能量化培训</el-tab-pane>
+            </el-tabs>
+          </template>
+        </el-tab-pane>
+        <el-tab-pane label="其它理论培训">其它理论培训</el-tab-pane>
+        <el-tab-pane label="其它技能培训">其它技能培训</el-tab-pane>
+        <el-tab-pane label="读书笔记/护理个案/护理查房/讲课">读书笔记/护理个案/护理查房/讲课</el-tab-pane>
+      </el-tabs>
     </el-dialog>
 
   </el-container>
 </template>
 
 <script>
+import userInfo from "@/components/userInfos";
+var curYear = new Date().getFullYear();
+
 export default {
   name: '',
+  components: { userInfo },
   data () {
     return {
       innerHeight:window.innerHeight - 160,
+      tabActiveName:'first',
+      hidden:'none',
+      exitdialogTitle:'',
 
       DateTimes: 0,
       dateStrArr: [],
       selYearValue:'',
-      selYearArr: [2016,2017,2018,2019],
+      selYearArr: [curYear - 2,curYear - 1,curYear,curYear + 1,curYear + 2],
       selMonthValue:'',
       selMonthArr: [1,2,3,4,5,6,7,8,9,10,11,12],
       selDayValue:'',
@@ -278,8 +260,7 @@ export default {
           planEndDate:'2018-1-30',
           evaluate:'优秀',
           realEndDate:'2018-3-30',
-          rotateStatus:'已出科',
-          operation:'个人信息 轮转手册 出科详情'
+          rotateStatus:'已出科'
         },{
           index:1,
           userName:'18888888888',
@@ -288,8 +269,7 @@ export default {
           planEndDate:'2018-1-30',
           evaluate:'优秀',
           realEndDate:'2018-3-30',
-          rotateStatus:'已出科',
-          operation:'个人信息 轮转手册 出科详情'
+          rotateStatus:'已出科'
         },{
           index:1,
           userName:'18888888888',
@@ -298,8 +278,7 @@ export default {
           planEndDate:'2018-1-30',
           evaluate:'优秀',
           realEndDate:'2018-3-30',
-          rotateStatus:'已出科',
-          operation:'个人信息 轮转手册 出科详情'
+          rotateStatus:'未申请出科'
         },{
           index:1,
           userName:'18888888888',
@@ -308,8 +287,7 @@ export default {
           planEndDate:'2018-1-30',
           evaluate:'优秀',
           realEndDate:'2018-3-30',
-          rotateStatus:'已出科',
-          operation:'个人信息 轮转手册 出科详情'
+          rotateStatus:'未申请出科'
         }
       ],
 
@@ -335,6 +313,7 @@ export default {
         planEndDate:'2018-3-30',
         personalSummary:'22222222222222222222222',
         departmentName:'妇产科',
+        departmentEvaluation:'000000000000000000000000',
         teacherName:'王五'
       },
 
@@ -343,7 +322,9 @@ export default {
         departmentEvaluation:'',
         evaluation:'',
         result:''
-      }
+      },
+
+      rotationdialogVisible:false
     }
   },
   activated() {
@@ -357,6 +338,12 @@ export default {
     //批准出科弹窗
     approvalOfExit(index, row){
       this.exitdialogVisible = true;
+      this.exitdialogTitle = row.rotateStatus=='已出科' ? '出科详情':'申请出科';
+      this.hidden = row.rotateStatus=='已出科' ? 'none':'block';
+    },
+    //展示轮转手册
+    showRotationManual(index, row){
+      this.rotationdialogVisible = true;
     }
   }
 }

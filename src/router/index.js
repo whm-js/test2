@@ -7,8 +7,10 @@ import selectFromPeople from '@/components/selectFromPeople'
 import trainManage from '@/components/trainManage'
 import entryManage from '@/components/entryManage'
 import exitManage from '@/components/exitManage'
+import exitTeacherManage from '@/components/exitTeacherManage'
 import deparmentManage from '@/components/deparmentManage'
 import nurseManage from '@/components/nurseManage'
+import personal from '@/components/personal'
 
 Vue.use(Router)
 
@@ -49,6 +51,11 @@ export default new Router({
         component: exitManage
       },
       {
+        path: '/exitTeacherManage',
+        name: 'exitTeacherManage',
+        component: exitTeacherManage
+      },
+      {
         path: '/deparmentManage',
         name: 'deparmentManage',
         component: deparmentManage
@@ -57,6 +64,11 @@ export default new Router({
         path: '/nurseManage',
         name: 'nurseManage',
         component: nurseManage
+      },
+      {
+        path: '/personal',
+        name: 'personal',
+        component: personal
       }]
     }
   ]

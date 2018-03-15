@@ -3,10 +3,12 @@
     <el-container style="height:100%;">
       <el-header style="text-align:left;font-size:24px;background-color:#409EFF;line-height:60px;">英腾护士培训智能管理系统
         <el-button @click="logindialog=true">登录</el-button>
+        <el-button @click="alert1">alert</el-button>
+        <el-button @click="alert2">confirm</el-button>
       </el-header>
       <el-container>
         <el-aside width="200px">
-          <el-menu default-active="2" @select="handleSelect" style="height:100%;" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+          <el-menu default-active="/deparmentManage" @select="handleSelect" style="height:100%;" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
             <el-menu-item index="1">
               <template slot="title">
                 <i class="el-icon-location"></i>
@@ -23,13 +25,20 @@
             </el-submenu>
             <el-submenu index="3">
               <template slot="title">
+                <i class="el-icon-setting"></i>
+                <span slot="title">个人信息</span>
+              </template>
+              <el-menu-item index="/personal">个人信息</el-menu-item>
+            </el-submenu>
+            <el-submenu index="4">
+              <template slot="title">
                 <i class="el-icon-location"></i>
                 <span>轮转计划(护理部)</span>
               </template>
               <el-menu-item index="/selectFromDepartment">按科室查看</el-menu-item>
               <el-menu-item index="/selectFromPeople">按人员查看</el-menu-item>
             </el-submenu>
-            <el-submenu index="4">
+            <el-submenu index="5">
               <template slot="title">
                 <i class="el-icon-setting"></i>
                 <span slot="title">轮转记录</span>
@@ -37,6 +46,7 @@
               <el-menu-item index="/trainManage">培训管理</el-menu-item>
               <el-menu-item index="/entryManage">入科管理</el-menu-item>
               <el-menu-item index="/exitManage">出科管理</el-menu-item>
+              <el-menu-item index="/exitTeacherManage">出科管理（导师）</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
@@ -90,13 +100,41 @@ export default {
       if (this.routerPath !== key) this.routerPath = key;
       this.$router.push(key);
     },
-    async login() {
+    login() {
       // const a = await userLogin(this.username, this.password)
-
       userLogin(this.username, this.password).then(res => {
         console.log(res);
         that.username = res.data.username;
       });
+    },
+    alert1 (){
+      this.$alert('这是一段内容', '标题名称', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$message({
+              type: 'info',
+              message: `action: ${ action }`
+            });
+          }
+        });
+    },
+    alert2 (){
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     }
   },
   created() {

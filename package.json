@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
     "element-ui": "^2.0.8",
     "file-saver": "^1.3.3",
     "js-base64": "^2.4.3",
