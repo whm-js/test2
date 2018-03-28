@@ -1,65 +1,99 @@
 <template slot-scope="">
-  <el-form :data="UserData" label-position="left" inline class="demo-table-expand">
-    <el-form-item label="账号：">
-      <span>{{UserData.userName}}</span>
-    </el-form-item>
-    <el-form-item label="角色：">
-      <span>{{UserData.role}}</span>
-    </el-form-item>
-    <el-form-item label="姓名：">
-      <span>{{UserData.realName}}</span>
-    </el-form-item>
-    <el-form-item label="职级：">
-      <span>{{UserData.workNo}}</span>
-    </el-form-item>
-    <el-form-item label="性别：">
-      <span>{{UserData.sex}}</span>
-    </el-form-item>
-    <el-form-item label="职称：">
-      <span>{{UserData.work}}</span>
-    </el-form-item>
-    <el-form-item label="学历：">
-      <span>{{UserData.education}}</span>
-    </el-form-item>
-    <el-form-item label="来院时间：">
-      <span>{{UserData.joinHospitalTime}}</span>
-    </el-form-item>
-    <el-form-item label="政治面貌：">
-      <span>{{UserData.political}}</span>
-    </el-form-item>
-    <el-form-item label="出生年月：">
-      <span>{{UserData.birthday}}</span>
-    </el-form-item>
-    <el-form-item label="毕业院校：">
-      <span>{{UserData.finishSchool}}</span>
-    </el-form-item>
-    <el-form-item label="参加工作时间：">
-      <span>{{UserData.joinWorkTime}}</span>
-    </el-form-item>
-    <el-form-item label="毕业时间：">
-      <span>{{UserData.finishTime}}</span>
-    </el-form-item>
-    <el-form-item label="获取执业证书：">
-      <span>{{UserData.certificateTime}}</span>
-    </el-form-item>
-    <el-form-item label="家庭地址：">
-      <span>{{UserData.address}}</span>
-    </el-form-item>
-    <el-form-item label="获得职称时间：">
-      <span>{{UserData.workTime}}</span>
-    </el-form-item>
-  </el-form>
+  <el-row id="userInfos">
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>角色：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.role?UserData.role:'-'}}</el-col>
+        <el-col :span="5" class="left"></el-col>
+        <el-col :span="5" class="left"></el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>账号：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.user_name?UserData.user_name:'-'}}</el-col>
+        <el-col :span="5" class="right"><span>出生年月：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.birthday?UserData.birthday:'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>姓名：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.real_name?UserData.real_name:'-'}}</el-col>
+        <el-col :span="5" class="right"><span>年级批次：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.batch?(UserData.batch=='0'?'-':UserData.batch):'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>手机号码：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.telephone?UserData.telephone:'-'}}</el-col>
+        <el-col :span="5" class="right"><span></span>学历：</el-col>
+        <el-col :span="5" class="left">{{UserData.education?UserData.education:'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>性别：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.sex?'男':'女'}}</el-col>
+        <el-col :span="5" class="right"><span></span>毕业院校：</el-col>
+        <el-col :span="5" class="left">{{UserData.school?UserData.school:'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>科室：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.depart_name?UserData.depart_name:'-'}}</el-col>
+        <el-col :span="5" class="right"><span></span>毕业年份：</el-col>
+        <el-col :span="5" class="left">{{UserData.graduated_year?(UserData.graduated_year=='0'?'-':UserData.graduated_year):'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>专业：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.profession?UserData.profession:'-'}}</el-col>
+        <el-col :span="5" class="right"><span></span>参加工作年份：</el-col>
+        <el-col :span="5" class="left">{{UserData.job_year?(UserData.job_year=='0'?'-':UserData.job_year):'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>职级：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.level?UserData.level:'-'}}</el-col>
+        <el-col :span="5" class="right"><span></span>来院年份：</el-col>
+        <el-col :span="5" class="left">{{UserData.join_year?(UserData.join_year=='0'?'-':UserData.join_year):'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>护士执业证书：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.certificate?'有':'无'}}</el-col>
+        <el-col :span="5" class="right"><span></span>获取证书时间：</el-col>
+        <el-col :span="5" class="left">{{UserData.certificate_date?UserData.certificate_date:'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>职称：</span></el-col>
+        <el-col :span="5" class="left">{{UserData.title?UserData.title:'-'}}</el-col>
+        <el-col :span="5" class="right"><span></span>获取职称时间：</el-col>
+        <el-col :span="5" class="left">{{UserData.title_date?UserData.title_date:'-'}}</el-col>
+    </el-row>
+    <el-row :gutter="20" type="flex">
+        <el-col :span="5" :offset="3" class="right"><span>家庭地址：</span></el-col>
+        <el-col :span="15" class="left">{{UserData.address?UserData.address:'-'}}</el-col>
+    </el-row>
+  </el-row>
 </template>
 
 <script>
+import { getUserInfos } from "@/http/data";
+import { mapGetters } from 'vuex';
 export default {
-  name: 'HelloWorld',
+  name: '',
   props: {
-    UserData: Object
+    UseID: [Number, String]
+  },
+  computed: {
+    ...mapGetters([
+      'userLoginInfo'
+    ])
   },
   data () {
     return {
-      curUserData:{}
+      UserData:{}
+    }
+  },
+  created(){
+      this.getUserData();
+  },
+  methods: {
+    getUserData(){
+      var that = this;
+      getUserInfos(this.userLoginInfo.guid,this.UseID).then(res=>{
+          that.UserData=res.datas;
+      });
     }
   }
 }
@@ -67,5 +101,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+#userInfos .left{text-align: left;}
+#userInfos .right{text-align: right;font-weight: bold;}
 </style>

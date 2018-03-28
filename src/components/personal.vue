@@ -1,5 +1,6 @@
 <template>
 <div id='personalHtml'>
+    <h3>个人信息</h3>
     <div class="navhtml" v-if="userrole!='护理部'">
         <el-button icon="el-icon-edit" @click="isShowuserinfodialog=true">修改个人信息</el-button>
         <el-button icon="el-icon-edit" @click="isShowpwddialog=true">修改密码</el-button>
@@ -7,7 +8,7 @@
     <div v-if="userrole=='护理部'" id="hulibutable">
         <el-main>
             <el-table :data="userinfoList" stripe border style="width: 100%;text-align:center;">
-            <el-table-column prop="index" label="序号" width="50"></el-table-column>
+            <el-table-column prop="index" label="序号" width="50">1</el-table-column>
             <el-table-column prop="username" label="账号"></el-table-column>
             <el-table-column prop="realname" label="姓名"></el-table-column>
             <el-table-column prop="userrole" label="角色"></el-table-column>
@@ -95,26 +96,26 @@
         <el-row :gutter="24" type="flex">
             <el-col :span="4" :offset="5" class="textalign"><span>账号：</span></el-col>
             <el-col :span="8" style="line-height: 40px;">
-               <span>234434</span>
+               <span>{{username}}</span>
             </el-col>
         </el-row>
         <el-row :gutter="24" type="flex">
             <el-col :span="4" :offset="5" class="textalign"><span>姓名：</span></el-col>
             <el-col :span="8" style="line-height: 40px;">
-               <span>章三</span>
+               <span>{{realname}}</span>
             </el-col>
         </el-row>
         <el-row :gutter="24" type="flex">
             <el-col :span="4" :offset="5" class="textalign"><font>*</font><span>原密码：</span></el-col>
             <el-col :span="8">
-               <el-input v-model="txtpwdold" placeholder="请输入姓名"></el-input>
+               <el-input v-model="txtpwdold" type="password" placeholder="请输入原密码"></el-input>
                <div class="redPrompt" v-show="showpwdoldVerif">{{txtpwdoldVerify}}</div>
             </el-col>
         </el-row>
         <el-row :gutter="24">
             <el-col :span="4" :offset="5" class="textalign"><font>*</font><span>新密码：</span></el-col>
             <el-col :span="8">
-                <el-input v-model="txtpwdnew" placeholder="请输入"></el-input>
+                <el-input v-model="txtpwdnew" type="password" placeholder="请输入新密码"></el-input>
                 <div class="redPrompt" v-show="showpwdnewVerif">{{txtpwdnewVerify}}</div>
             </el-col>
         </el-row>
@@ -128,16 +129,21 @@
 </template>
 
 <script>
+import { getPersonalinfo,changepwd,userLogout } from "@/http/data";
+import { mapGetters } from 'vuex';
 export default {
     name: '',
     data () {
         return {
             userinfoList:[{
                 index:1,
-                username:'111111',
-                realname:'章三',
-                userrole:'护理部',
+                id:4,
+                username:'',
+                realname:'',
+                userrole:'护理部'
             }],
+            username:'',
+            realname:'',
             userrole:'护理部',
             isShowuserinfodialog:false,
             isShowpwddialog:false,
@@ -150,10 +156,21 @@ export default {
         }
     },
     methods:{
-        editdialog:function(){
-            this.isShowuserinfodialog=false;
+        getpersonalinfo(){
+            var that=this;
+            getPersonalinfo(this.userLoginInfo.guid).then(res=>{
+                that.userinfoList[0].id=res.datas.id;
+                that.userinfoList[0].username=res.datas.user_name;
+                that.userinfoList[0].realname=res.datas.real_name;
+                that.userinfoList[0].userrole=res.datas.role;
+
+                that.username=res.datas.user_name;
+                that.realname=res.datas.real_name;
+                console.log(that.userinfoList);
+            });
         },
         editpwd:function(){
+            var that=this;
             if(this.txtpwdold==null || this.txtpwdold==''){
                 this.showpwdoldVerif=true;
                 this.txtpwdoldVerify='请输入原密码！';
@@ -164,16 +181,37 @@ export default {
             }else{
                 this.isShowpwddialog=false;
             }
-            
+            changepwd(this.userLoginInfo.guid,this.txtpwdold,this.txtpwdnew).then(res=>{
+                this.$alert('密码修改成功，请重新登录', '修改密码', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        userLogout(this.userLoginInfo.guid).then(res=>{
+                            if(res.code==0){
+                                that.isShowpwddialog=false;
+                                this.$router.push('/login');
+                            }
+                        });
+                    }
+                });
+            });
         },
         edituserinfo:function(){
 
         }
-    }
+    },
+  created(){
+      this.getpersonalinfo();
+  },
+  computed: {
+    ...mapGetters([
+      'userLoginInfo'
+    ])
+  }
 }
 </script>
 
 <style>
+h3 {margin-left: 20px;}
 #personalHtml .navhtml{padding:20px;border-bottom:1px solid #ccc;}
 #personalHtml #hulibutable table th,td{text-align: center;}
 #personalHtml #editpwddialog .el-dialog__body{padding-top:8px;}

@@ -5,20 +5,22 @@
         <div>英腾护士</div>
       </el-header>
       <el-main>
-        <div style="width:400px;height:400px;margin: 50px auto;">
-          <el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="100px" class="demo-ruleForm">
+        <div style="width: 400px;height: 300px;margin: 50px auto;text-align: center;background-color: #ccc;padding-top: 40px;">
+          <el-form style="width: 320px;margin-left: 40px;" :label-position="'left'" :model="loginForm" :rules="rules" ref="loginForm" label-width="60px" class="demo-ruleForm">
             <el-form-item label="用户名" prop="name">
               <el-input v-model="loginForm.username"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="name">
-              <el-input v-model="loginForm.password"></el-input>
+              <el-input v-model="loginForm.password" type="password"></el-input>
             </el-form-item>
           </el-form>
+
+          <el-button @click.native="loginClick" style="width:320px;" type="primary">登录</el-button>
         </div>
       </el-main>
       <el-footer>
         <div style="text-align:center;">
-          Copyright © 2015-2018 广西英腾教育 备案信息：桂ICP备13003351号-2
+          Copyright © 2015-2018 英腾教育 备案信息：桂ICP备13003351号-2
         </div>
       </el-footer>
     </el-container>
@@ -26,6 +28,9 @@
 </template>
 
 <script>
+import { userLogin } from "@/http/data";
+import { mapActions } from 'vuex'
+var that
 export default {
   name: "App",
   data () {
@@ -39,6 +44,19 @@ export default {
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       }
     }
+  },
+  methods: {
+    ...mapActions({ setUserLoginInfo: 'setUserLoginInfo' }),
+    loginClick () {
+      userLogin(this.loginForm.username, this.loginForm.password).then(res => {
+        // console.log(res);
+        that.setUserLoginInfo(res.datas);
+        that.$router.push('/')
+      });
+    }
+  },
+  created () {
+    that = this
   }
 };
 </script>

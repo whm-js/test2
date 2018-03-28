@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 // import "babel-polyfill"
+import store from './store/store'
 
 Vue.config.productionTip = false
 
@@ -38,7 +39,8 @@ import {
   Steps,
   Step,
   MessageBox,
-  Loading
+  Loading,
+  Pagination
 } from 'element-ui';
 Vue.use(Container)
 Vue.use(Header)
@@ -69,6 +71,7 @@ Vue.use(Autocomplete)
 Vue.use(Steps)
 Vue.use(Step)
 Vue.use(Loading)
+Vue.use(Pagination)
 // Vue.use(MessageBox)
 
 Vue.$message = Vue.prototype.$message = MessageBox;
@@ -81,6 +84,7 @@ Vue.prototype
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

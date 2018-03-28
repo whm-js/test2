@@ -1,11 +1,13 @@
 import axios from 'axios'
 import { Loading, Message } from 'element-ui'
+import store from '../store/store'
+import router from '@/router'
 
 var baseUrl = 'http://101.37.24.216:3009/' //服务器地址
 if (location.hostname == 'localhost') {
-    baseUrl = 'http://101.37.24.216:3003/'
+    baseUrl = 'http://118.178.92.150:3101/'
 }
-
+//: http://101.37.24.216:3101
 axios.defaults.timeout = 5000
 
 // request拦截器
@@ -76,7 +78,24 @@ export default async (url, data, method = "post") => {
             url: url,
             data: data,
         }).then(function (res) {
-            resolve(res.data)
+            if (res.status !== 200) {
+                Message.error(res.data.message);
+                reject(res.data.message)
+            }
+            if (res.data.code !== 0) {
+                if (res.data.code === -3003) {
+                    store._actions.setSignOut[0]()
+                    Message.error(res.data.message);
+                    router.push('/login')
+                    reject(res.data.message)
+                } else {
+                    Message.error(res.data.message);
+                    reject(res.data.message)
+                }
+
+            } else {
+                resolve(res.data)
+            }
         }).catch(function (err) {
             Message.error(err);
             reject(err)

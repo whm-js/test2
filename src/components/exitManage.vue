@@ -4,21 +4,21 @@
       <el-row :gutter="12">
         <el-col :span="3" style="padding-top:5px;padding-left:15px;margin-left:10px;text-align: center;">计划出科时间：</el-col>
         <el-col :span="3">
-        <el-select :span="2" v-model="selYearValue"  placeholder="请选择" style="float:left;width:100px;margin-left:3px;">
+        <el-select :span="2" v-model="selYearValue" @change="getRotatePlanList"  placeholder="请选择" style="float:left;width:100px;margin-left:3px;">
             <el-option v-for="item in selYearArr" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
           <el-col :span="1" style="float:left;padding-top:8px;">年</el-col>
         </el-col>
         <el-col :span="3">
-          <el-select :span="2" v-model="selMonthValue"  placeholder="请选择" style="float:left;width:100px;">
+          <el-select :span="2" v-model="selMonthValue" @change="getRotatePlanList"  placeholder="请选择" style="float:left;width:100px;">
             <el-option v-for="item in selMonthArr" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
           <el-col :span="1" style="float:left;padding-top:8px;">月</el-col>
         </el-col>
         <el-col :span="3">
-          <el-select :span="2" v-model="selDayValue"  placeholder="请选择" style="float:left;width:100px;">
+          <el-select :span="2" v-model="selDayValue" @change="getRotatePlanList"  placeholder="请选择" style="float:left;width:100px;">
             <el-option v-for="item in selDayArr" :key="item.id" :label="item.name" :value="item.id">
             </el-option>
           </el-select>
@@ -27,20 +27,20 @@
       </el-row>
 
       <el-row :gutter="22" style="padding-bottom:20px;border-bottom: 1px solid #ccc;">
-        <el-col :span="9" style="margin-left:60px;padding-left: 0px;">
+        <el-col :span="8" style="margin-left:60px;padding-left: 0px;">
           <el-col :span="6" style="float: left;padding:5px 10px 0px 0px;">出科科室：</el-col>
-          <el-select :span="3" v-model="departmentValue" filterable  placeholder="请选择" style="width:180px;">
+          <el-select :span="2" v-model="departmentValue" filterable  placeholder="请选择" style="width:180px;">
             <el-option
               v-for="item in departmentData"
-              :key="item.departmentId"
-              :label="item.departmentName"
-              :value="item.departmentName">
+              :key="item.depart_id"
+              :label="item.depart_name"
+              :value="item.depart_name">
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="9">
+        <el-col :span="8">
           <el-col :span="6" style="float: left;padding:5px 10px 0px 0px;">出科状态：</el-col>
-          <el-select :span="3" v-model="rotateStatusValue"  placeholder="请选择" style="width:180px;">
+          <el-select :span="2" v-model="rotateStatusValue"  placeholder="请选择" style="width:180px;">
             <el-option
               v-for="item in rotateStatus"
               :key="item.id"
@@ -49,8 +49,9 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="4">
-          <el-button type="primary" icon="el-icon-search">查询</el-button>
+        <el-col :span="6">
+          <el-button :span="3" type="primary" icon="el-icon-search" @click="queryRotatePlanInfos">查询</el-button>
+          <el-button :span="3" type="primary" icon="el-icon-search" @click="queryAllRotatePlanInfos">显示全部</el-button>
         </el-col>
       </el-row>
 
@@ -64,14 +65,14 @@
     </el-header>
     <el-main>
       <el-table :data="studentListData" stripe border :max-height="innerHeight">
-        <el-table-column prop="index" label="序号" width="50"></el-table-column>
-        <el-table-column prop="userName" label="账号"></el-table-column>
-        <el-table-column prop="realName" label="姓名"></el-table-column>
-        <el-table-column prop="department" label="出科科室"></el-table-column>
-        <el-table-column prop="planEndDate" label="计划出科时间"></el-table-column>
-        <el-table-column prop="realEndDate" label="实际出科时间"></el-table-column>
-        <el-table-column prop="evaluate" label="护士长评价"></el-table-column>
-        <el-table-column prop="rotateStatus" label="出科状态"></el-table-column>
+        <el-table-column type="index" :index="getIndex" label="序号" width="50"></el-table-column>
+        <el-table-column prop="UserName" label="账号"></el-table-column>
+        <el-table-column prop="RealName" label="姓名"></el-table-column>
+        <el-table-column prop="DepartmentName" label="出科科室"></el-table-column>
+        <el-table-column prop="PlanEndDate" label="计划出科时间"></el-table-column>
+        <el-table-column prop="RealityEndDate" label="实际出科时间"></el-table-column>
+        <el-table-column prop="Remark" label="护士长评价"></el-table-column>
+        <el-table-column prop="RealStatus" label="出科状态"></el-table-column>
         <el-table-column prop="operation" label="操作" width="320">
           <template slot-scope="scope">
               <el-button @click.native.prevent="showUserInfos(scope.$index, scope.row)" size="small">
@@ -80,51 +81,67 @@
               <el-button @click.native.prevent="showRotationManual(scope.$index, scope.row)"  size="small">
                轮转手册
               </el-button>
-              <el-button @click.native.prevent="approvalOfExit(scope.$index, scope.row)" size="small">
+              <el-button @click.native.prevent="approvalOfExit(scope.$index, scope.row)" size="small" v-show="scope.row.RotateStatus==200&&userLoginInfo.user.role=='护理部'">
                 出科详情
+              </el-button>
+              <el-button @click.native.prevent="approvalOfExit(scope.$index, scope.row)" size="small" v-show="(scope.row.RotateStatus==103||scope.row.RotateStatus==104)&&userLoginInfo.user.role=='护士长'">
+                审核出科
               </el-button>
             </template>
         </el-table-column>
       </el-table>
+      <el-pagination style="float:right;padding-top:20px;" v-show="showpage" 
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="curPage"
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size="pageSize"
+          layout="sizes, prev, pager, next"
+          :total="total">
+      </el-pagination>
     </el-main>
 
     <!--弹窗展示个人信息-->
     <el-dialog title="查看个人信息" :visible.sync="showUserdialogVisible">
-      <userInfo :UserData="userData"></userInfo>
+      <userInfo :UseID="userId"></userInfo>
     </el-dialog>
 
-    <!--弹窗展示批准入科信息-->
+    <!--弹窗展示审核出科信息-->
     <el-dialog :title="exitdialogTitle" :visible.sync="exitdialogVisible">
-      <el-form :model="exitForm" :data="userData">
+      <el-form :model="exitForm" :data="exitUserData">
         <el-row style="margin-bottom:0px;">
         <el-col :span="6">
           <el-form-item label="学员：">
-            <span>{{userData.realName}}（{{userData.userName}}）</span>
+            <span>{{exitUserData.RealName}}（{{exitUserData.UserName}}）</span>
           </el-form-item>
         </el-col>
         <el-col :span="5">
           <el-form-item label="科室：">
-            <span>{{userData.departmentName}}</span>
+            <span>{{exitUserData.DepartmentName}}</span>
           </el-form-item>
         </el-col>
         <el-col :span="5">
           <el-form-item label="指导老师：">
-            <span>{{userData.teacherName}}</span>
+            <span>{{exitUserData.CoachingName?exitUserData.CoachingName:'-'}}</span>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="轮转时间：">
-            <span>{{userData.planStartDate}}-{{userData.planEndDate}}</span>
+            <span>{{exitUserData.RealityStartDate}}至{{exitUserData.RealityEndDate}}</span>
           </el-form-item>
         </el-col>
       </el-row>
         <el-form-item label="个人总结：" id="personalSummary">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" :value="userData.personalSummary" readonly style="background: #eee;"></el-input>
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" :value="exitUserData.personalSummary" readonly style="background: #eee;"></el-input>
         </el-form-item>
         <template v-if="hidden=='none'">
           <el-form-item label="科室评价：" id="departmentEvaluation">
-            <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" :value="userData.departmentEvaluation" readonly style="background: #eee;"></el-input>
+            <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" :value="exitUserData.departmentEvaluation" readonly style="background: #eee;"></el-input>
           </el-form-item>
+          <el-row :gutter="10" type="flex">
+            <el-col :span="5">护士长评价：</el-col>
+            <el-col :span="5">优秀</el-col>
+          </el-row>
         </template>
         <template v-else>
           <el-form-item label="科室评价：">
@@ -177,8 +194,13 @@
 </template>
 
 <script>
+import { getRotatePlanList, getDeparmentList } from "@/http/data";
+import { mapGetters } from 'vuex';
 import userInfo from "@/components/userInfos";
+
 var curYear = new Date().getFullYear();
+var curMonth = new Date().getMonth()+1;
+var curDate = new Date().getDate() <=15 ? '15':new Date().getDate();
 
 export default {
   name: '',
@@ -192,11 +214,11 @@ export default {
 
       DateTimes: 0,
       dateStrArr: [],
-      selYearValue:'',
+      selYearValue:curYear,
       selYearArr: [curYear - 2,curYear - 1,curYear,curYear + 1,curYear + 2],
-      selMonthValue:'',
+      selMonthValue:curMonth,
       selMonthArr: [1,2,3,4,5,6,7,8,9,10,11,12],
-      selDayValue:'',
+      selDayValue:curDate,
       selDayArr: [
         {
           id:15,
@@ -211,19 +233,22 @@ export default {
       rotateStatus:[
         {
           id:0,
-          name:'未审批'
-        },{
-          id:2,
           name:'未入科'
         },{
           id:100,
           name:'未申请出科'
         },{
           id:101,
-          name:'老师未填写评语'
+          name:'导师未审核'
         },{
           id:102,
-          name:'科主任未审核'
+          name:'导师审核不通过'
+        },{
+          id:103,
+          name:'护士长未审核'
+        },{
+          id:104,
+          name:'护士长审核不通过'
         },{
           id:200,
           name:'已出科'
@@ -231,93 +256,20 @@ export default {
       ],
 
       departmentValue:'',
-      departmentData:[
-        {
-          departmentId:1,
-          departmentName:'儿科'
-        },{
-          departmentId:2,
-          departmentName:'内科'
-        },{
-          departmentId:3,
-          departmentName:'神经内科'
-        },{
-          departmentId:4,
-          departmentName:'全科'
-        },{
-          departmentId:5,
-          departmentName:'妇产科'
-        }
+      departmentData:[],
 
-      ],
-
-      studentListData:[
-        {
-          index:1,
-          userName:'18888888888',
-          realName:'李四',
-          department:'妇产科',
-          planEndDate:'2018-1-30',
-          evaluate:'优秀',
-          realEndDate:'2018-3-30',
-          rotateStatus:'已出科'
-        },{
-          index:1,
-          userName:'18888888888',
-          realName:'李四',
-          department:'妇产科',
-          planEndDate:'2018-1-30',
-          evaluate:'优秀',
-          realEndDate:'2018-3-30',
-          rotateStatus:'已出科'
-        },{
-          index:1,
-          userName:'18888888888',
-          realName:'李四',
-          department:'妇产科',
-          planEndDate:'2018-1-30',
-          evaluate:'优秀',
-          realEndDate:'2018-3-30',
-          rotateStatus:'未申请出科'
-        },{
-          index:1,
-          userName:'18888888888',
-          realName:'李四',
-          department:'妇产科',
-          planEndDate:'2018-1-30',
-          evaluate:'优秀',
-          realEndDate:'2018-3-30',
-          rotateStatus:'未申请出科'
-        }
-      ],
+      loading:true,//加载
+      showpage:false,//是否分页显示
+      curPage:1,//当前页数
+      pageSize:10,//每页显示条数
+      total:100,//总数
+      studentListData:[],
 
       showUserdialogVisible: false,
-      userData:{
-        userName:'145709',
-        role:'护士',
-        realName:'张三',
-        workNo:'N 0',
-        sex:'男',
-        work:'护士',
-        education:'本科生',
-        joinHospitalTime:'2015-2-4',
-        political:'党员',
-        birthday:'1990-1-1',
-        finishSchool:'北京大学',
-        joinWorkTime:'2014-6-1',
-        finishTime:'2013-6',
-        certificateTime:'2016-5-4',
-        address:'广西柳州市城中区',
-        workTime:'2016-9',
-        planStartDate:'2017-12-1',
-        planEndDate:'2018-3-30',
-        personalSummary:'22222222222222222222222',
-        departmentName:'妇产科',
-        departmentEvaluation:'000000000000000000000000',
-        teacherName:'王五'
-      },
+      userId:0,
 
       exitdialogVisible:false,
+      exitUserData:{},
       exitForm:{
         departmentEvaluation:'',
         evaluation:'',
@@ -330,16 +282,130 @@ export default {
   activated() {
     window.scrollTo(0, 0);
   },
+  computed: {
+    ...mapGetters([
+      'userLoginInfo'
+    ])
+  },
+  created(){
+      this.getRotatePlanList();
+      this.getDeparmentList();
+  },
   methods: {
+    //获取数据列表的序号
+    getIndex(index) {
+      return (this.curPage-1)*10+index+1;
+    },
+    //获取护士学员入科数据列表
+    getRotatePlanList(){
+      var that=this;
+      var planEndDate = '';
+      if(this.selYearValue&&this.selMonthValue&&this.selDayValue){
+        planEndDate = this.selYearValue+'-'+this.selMonthValue;
+        planEndDate = this.getMonthEndDate(planEndDate, 'end');
+      }
+      getRotatePlanList(this.userLoginInfo.guid,this.curPage,this.pageSize,'', this.departmentValue, '', this.rotateStatusValue, planEndDate, '').then(res=>{
+          that.loading=false;
+          that.studentListData=res.datas.items;
+            //获取总数
+            that.total=res.datas.count;
+            if(that.total>10){that.showpage=true;}
+      });
+    },
+    //分页控件，每页显示的条数
+    handleSizeChange(size){
+        this.pageSize=size;
+        this.getRotatePlanList();
+    },
+    //分页控件，当前页数
+    handleCurrentChange(val) {
+      this.curPage=val;
+      this.getRotatePlanList();
+    },
+    //获取科室信息
+    getDeparmentList(){
+        var that=this;
+        getDeparmentList(this.userLoginInfo.guid,this.curPage,10000).then(res=>{
+            that.departmentData=res.datas.items;
+        });
+    },
+    //获取每个月的月底所对应的日期
+    getMonthEndDate(val,tag){
+      var dateStr=val;
+      if(dateStr===''||!dateStr||tag===''||!tag){
+          return '';
+      }
+      var _date = new Date(dateStr);
+      var curYear =  _date.getFullYear();
+      var curMonth =  _date.getMonth()+1;
+      var curDate =_date.getDate();
+      var isLeapYear=false;
+      if(tag==='start'){
+          curDate=1;
+      }
+      if(tag==='end'){
+          var solarMonth=[1,3,5,7,8,10,12];
+          var lunarMonth=[2,4,6,9,11];
+          if(curYear%100===0){
+              if(curYear%400===0){
+                  isLeapYear=true;
+              }
+          }else{
+              if(curYear%4===0){
+                  isLeapYear=true;
+              }
+          }
+          for(var i=0;i<solarMonth.length;i++){
+              if(curMonth===solarMonth[i]){
+                  curDate=31
+                  break;
+              }
+          }
+          for(var i=0;i<lunarMonth.length;i++){
+              if(curMonth===2){
+                  if(isLeapYear){
+                      curDate=29;
+                  }else{
+                      curDate=28;
+                  }
+                  break
+              }
+              if(curMonth===lunarMonth[i]){
+                  curDate=30;
+                  break;
+              }
+          }
+      }
+      curMonth=curMonth>10?curMonth:'0'+curMonth;
+      curDate=curDate>10?curDate:'0'+curDate;
+      dateStr=curYear+'-'+curMonth+'-'+curDate;
+      return dateStr;
+    },
+    //根据条件查询轮转数据
+    queryRotatePlanInfos(){
+      this.getRotatePlanList();
+    },
+    //显示全部轮转信息
+    queryAllRotatePlanInfos(){
+      this.curPage = 1;
+      this.selYearValue = '';
+      this.selMonthValue = '';
+      this.selDayValue = '';
+      this.departmentValue = '';
+      this.rotateStatusValue = '';
+      this.getRotatePlanList();
+    },
     //查看个人信息弹窗
     showUserInfos(index, row) {
       this.showUserdialogVisible = true;
+      this.userId = row.UserId;
     },
     //批准出科弹窗
     approvalOfExit(index, row){
       this.exitdialogVisible = true;
-      this.exitdialogTitle = row.rotateStatus=='已出科' ? '出科详情':'申请出科';
-      this.hidden = row.rotateStatus=='已出科' ? 'none':'block';
+      this.exitdialogTitle = row.RotateStatus=='200' ? '出科详情':'审核出科';
+      this.hidden = row.RotateStatus=='200' ? 'none':'block';
+      this.exitUserData = row;
     },
     //展示轮转手册
     showRotationManual(index, row){
