@@ -3,10 +3,6 @@ import { Loading, Message } from 'element-ui'
 import store from '../store/store'
 import router from '@/router'
 
-var baseUrl = 'http://101.37.24.216:3009/' //服务器地址
-if (location.hostname == 'localhost') {
-    baseUrl = 'http://118.178.92.150:3101/'
-}
 //: http://101.37.24.216:3101
 axios.defaults.timeout = 5000
 
