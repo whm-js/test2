@@ -3,7 +3,6 @@ import { Loading, Message } from 'element-ui'
 import store from '../store/store'
 import router from '@/router'
 
-//: http://101.37.24.216:3101
 axios.defaults.timeout = 5000
 
 // request拦截器
